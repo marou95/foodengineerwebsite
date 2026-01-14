@@ -7,6 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Polyfill for process.env (Critical for some libraries) -->
+    <script>
+      window.process = window.process || { env: {} };
+    </script>
+
+    <!-- CSS for Local Development -->
+    <link rel="stylesheet" href="./index.css" />
+
+    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -25,33 +35,36 @@
             fontFamily: {
               sans: ['Montserrat', 'sans-serif'],
               serif: ['Playfair Display', 'serif'],
-            },
-            backgroundImage: {
-              'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
             }
           }
         }
       }
     </script>
-  <script type="importmap">
+
+    <!-- Import Map aligned with React 19 (Working Pattern) -->
+    <!-- Added ?external=react,react-dom to libraries to prevent Duplicate React Instance error (#31) -->
+    <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react/": "https://esm.sh/react@18.2.0/",
-    "react-dom": "https://esm.sh/react-dom@18.2.0?deps=react@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client?deps=react@18.2.0",
-    "framer-motion": "https://esm.sh/framer-motion@11.0.3?deps=react@18.2.0,react-dom@18.2.0",
+    "react": "https://esm.sh/react@19.0.0-rc.0",
+    "react/": "https://esm.sh/react@19.0.0-rc.0/",
+    "react-dom": "https://esm.sh/react-dom@19.0.0-rc.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0-rc.0/client",
+    "framer-motion": "https://esm.sh/framer-motion@11.0.3?external=react,react-dom",
+    "react-i18next": "https://esm.sh/react-i18next@14.0.5?external=react,react-dom",
     "i18next": "https://esm.sh/i18next@23.10.0",
-    "react-i18next": "https://esm.sh/react-i18next@14.0.5?deps=react@18.2.0,i18next@23.10.0,react-dom@18.2.0",
-    "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react,react-dom",
     "@sanity/client": "https://esm.sh/@sanity/client@6.15.6",
     "@sanity/image-url": "https://esm.sh/@sanity/image-url@1.0.2",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
-</head>
-  <body class="text-lab-text antialiased selection:bg-lab-citrus selection:text-white">
+  </head>
+  <body class="text-lab-text antialiased selection:bg-lab-citrus selection:text-white bg-lab-white">
     <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
