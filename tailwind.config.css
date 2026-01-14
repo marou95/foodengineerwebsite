@@ -1,0 +1,24 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        // Voici les couleurs que nous avons définies ensemble
+        'lab-white': '#F8FAFC',
+        'lab-mint': '#3EB489', // Un vert menthe frais
+        'lab-citrus': '#FFAC1C', // Un orange agrume dynamique
+        'lab-water': '#0096FF', // Un bleu eau pure
+        'lab-dark': '#1E293B', // Pour le texte pro (Slate 800)
+      },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      },
+    },
+  },
+  plugins: [],
+}
