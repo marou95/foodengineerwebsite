@@ -14,10 +14,14 @@
     "@sanity/image-url": "^1.0.2",
     "framer-motion": "^11.0.3",
     "i18next": "^23.10.0",
-    "lucide-react": "^0.344.0",
+    "lucide-react": "^0.454.0",
     "react": "^19.0.0-rc.0",
     "react-dom": "^19.0.0-rc.0",
     "react-i18next": "^14.0.5"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   },
   "devDependencies": {
     "@types/react": "npm:types-react@19.0.0-rc.0",
