@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ArrowRight, Send, Linkedin, Instagram, Info } from 'lucide-react';
+import { ArrowRight, Send, Linkedin, Instagram } from 'lucide-react';
 
 import Navbar from './components/Navbar';
 import LiquidBackground from './components/LiquidBackground';
@@ -22,19 +22,26 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isUsingMocks, setIsUsingMocks] = useState(false);
 
+  // Récupération des données Sanity
   useEffect(() => {
     const fetchData = async () => {
-      const [drinksData, postsData] = await Promise.all([getDrinks(), getPosts()]);
-      setDrinks(drinksData);
-      setPosts(postsData);
+      try {
+        const [drinksData, postsData] = await Promise.all([getDrinks(), getPosts()]);
+        setDrinks(drinksData);
+        setPosts(postsData);
 
-      const hasMockId = drinksData.some(d => d._id === '1' || d._id === '2');
-      if (hasMockId) setIsUsingMocks(true);
-      setLoading(false);
+        const hasMockId = drinksData.some(d => d._id === '1' || d._id === '2');
+        if (hasMockId) setIsUsingMocks(true);
+      } catch (error) {
+        console.error("Erreur de chargement des données Sanity:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
 
+  // Fonction de scroll fluide pour les ancres de la page d'accueil
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.replace('#', '');
@@ -47,6 +54,7 @@ const App: React.FC = () => {
     }
   };
 
+  // --- COMPOSANT PAGE D'ACCUEIL ---
   const HomePage = () => (
     <main className="relative z-10">
       {/* HERO SECTION */}
@@ -81,7 +89,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* --- PORTFOLIO SECTION (HORIZONTAL SCROLL) --- */}
+      {/* PORTFOLIO SECTION (HORIZONTAL SCROLL) */}
       <section id="portfolio" className="py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-16">
           <motion.div
@@ -93,11 +101,11 @@ const App: React.FC = () => {
           </motion.div>
         </div>
 
-        {/* Conteneur avec scrollbar-hide */}
+        {/* Conteneur avec scrollbar-hide (Défilement horizontal) */}
         <div className="flex gap-8 overflow-x-auto pb-12 px-6 md:px-[calc((100vw-1280px)/2+24px)] snap-x snap-mandatory scrollbar-hide">
           {loading ? (
-            <div className="w-full text-center py-20 text-slate-500 animate-pulse">
-              Loading formulations...
+            <div className="w-full text-center py-20 text-slate-500 animate-pulse font-serif italic text-xl">
+              Analyzing Lab Formulations...
             </div>
           ) : (
             drinks.map((drink) => (
@@ -106,26 +114,52 @@ const App: React.FC = () => {
               </div>
             ))
           )}
+          {/* Petit espaceur pour la fin du scroll */}
+          <div className="flex-shrink-0 w-1 h-1 shadow-none outline-none"></div>
         </div>
       </section>
 
-      {/* BLOG SECTION */}
+      {/* BLOG SECTION (LAB JOURNAL) */}
       <section id="blog" className="py-24 bg-white/20 backdrop-blur-sm border-y border-white/20">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="font-serif text-4xl text-lab-dark mb-12">{t('blog.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {posts.map((post) => (
-              <article key={post._id} className="flex flex-col md:flex-row gap-6 group cursor-pointer">
-                <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shadow-md flex-shrink-0">
-                  <img src={post.mainImage?.asset?._ref ? urlFor(post.mainImage).width(400).url() : `https://picsum.photos/300/300?random=${post._id}`} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                </div>
-                <div className="flex-1 flex flex-col justify-center">
-                  <span className="text-xs font-bold text-lab-citrus uppercase mb-2">{post.publishedAt}</span>
-                  <h3 className="text-xl font-serif font-semibold text-lab-dark mb-3 group-hover:text-lab-citrus transition-colors">{post.title?.[lang]}</h3>
-                  <p className="text-sm text-slate-600 mb-4 line-clamp-2">{post.excerpt?.[lang]}</p>
-                </div>
-              </article>
-            ))}
+            {posts.map((post) => {
+               const slug = post.slug?.current;
+               const imageUrl = post.mainImage?.asset?._ref 
+                 ? urlFor(post.mainImage).width(400).height(400).url() 
+                 : `https://picsum.photos/400/400?random=${post._id}`;
+
+               return (
+                <Link 
+                  to={slug ? `/blog/${slug}` : '#'} 
+                  key={post._id} 
+                  className="flex flex-col md:flex-row gap-6 group cursor-pointer"
+                >
+                  <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shadow-md flex-shrink-0">
+                    <img 
+                      src={imageUrl} 
+                      alt="" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center">
+                    <span className="text-xs font-bold text-lab-citrus uppercase tracking-wider mb-2">
+                      {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US') : 'Recent'}
+                    </span>
+                    <h3 className="text-xl font-serif font-semibold text-lab-dark mb-3 group-hover:text-lab-citrus transition-colors">
+                      {post.title?.[lang] || 'Untitled'}
+                    </h3>
+                    <p className="text-sm text-slate-600 mb-4 line-clamp-2 leading-relaxed">
+                      {post.excerpt?.[lang] || ''}
+                    </p>
+                    <span className="text-xs font-bold underline decoration-lab-mint underline-offset-4 group-hover:text-lab-mint transition-colors">
+                      {t('blog.read_more') || 'Read More'}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -147,8 +181,9 @@ const App: React.FC = () => {
         </div>
         <footer className="mt-20 flex flex-col items-center gap-4 text-slate-400">
           <div className="flex gap-6">
-            <a href="#" className="hover:text-lab-dark transition-colors"><Linkedin size={24} /></a>
-            <a href="#" className="hover:text-lab-dark transition-colors"><Instagram size={24} /></a>
+            <a href="https://www.linkedin.com/in/melisa-mumcu/" target="_blank" rel="noreferrer" className="hover:text-lab-dark transition-colors">
+              <Linkedin size={24} />
+            </a>
           </div>
           <p className="text-xs">© {new Date().getFullYear()} Melisa Mumcu. All rights reserved.</p>
         </footer>
@@ -160,12 +195,15 @@ const App: React.FC = () => {
     <Router>
       <div className="relative min-h-screen overflow-hidden bg-lab-white">
         <LiquidBackground />
+        {/* La Navbar doit être à l'intérieur du Router pour utiliser Link et useNavigate */}
         <Navbar />
+        
         {isUsingMocks && !loading && (
           <div className="fixed bottom-0 left-0 right-0 z-[60] bg-orange-500/90 backdrop-blur-md text-white text-xs py-2 px-4 text-center">
             <span><b>Demo Mode:</b> Connected to Sanity, but using mock data.</span>
           </div>
         )}
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/drink/:slug" element={<DrinkDetail />} />
