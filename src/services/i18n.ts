@@ -28,10 +28,10 @@ const resources = {
         read_more: "Read Analysis"
       },
       contact: {
-        title: "Collaborate",
+        title: "Contact Me",
         name: "Name",
         email: "Email",
-        message: "Project Details",
+        message: "Your Message",
         send: "Transmit Request",
         success: "Data transmitted successfully."
       }
@@ -62,10 +62,10 @@ const resources = {
         read_more: "Analizi Oku"
       },
       contact: {
-        title: "İşbirliği Yap",
+        title: "Bana yazın",
         name: "İsim",
         email: "E-posta",
-        message: "Proje Detayları",
+        message: "Mesajınız",
         send: "İsteği İlet",
         success: "Veri başarıyla iletildi."
       }

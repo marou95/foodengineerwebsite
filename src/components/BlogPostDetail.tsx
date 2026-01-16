@@ -62,7 +62,7 @@ const BlogPostDetail: React.FC = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen pt-32 pb-20 px-6 bg-lab-white relative z-10"
+      className="min-h-screen pt-32 pb-20 px-6 bg-transparent relative z-10"
     >
       <article className="max-w-3xl mx-auto">
         {/* Navigation */}

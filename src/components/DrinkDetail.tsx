@@ -35,7 +35,7 @@ const DrinkDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-center bg-lab-white">
+      <div className="h-screen flex items-center justify-centerbg-transparent">
         <p className="font-serif text-xl animate-pulse">Analysing Lab Records...</p>
       </div>
     );
@@ -44,9 +44,9 @@ const DrinkDetail: React.FC = () => {
   // Si on arrive ici avec slug="undefined" ou si Sanity n'a rien trouvé
   if (!drink) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-lab-white p-6 text-center">
+      <div className="h-screen flex flex-col items-center justify-center bg-transparent p-6 text-center">
         <h2 className="text-2xl font-serif mb-4">Formulation Not Found</h2>
-        <p className="text-slate-500 mb-8">The slug is missing or the project hasn't been published.</p>
+        <p className="text-slate-500 mb-8">Something went wrong.</p>
         <button onClick={() => navigate('/')} className="bg-lab-dark text-white px-6 py-3 rounded-full">
           Return to Laboratory
         </button>
@@ -55,13 +55,13 @@ const DrinkDetail: React.FC = () => {
   }
 
   const imageUrl = drink.mainImage?.asset?._ref
-    ? urlFor(drink.mainImage).width(1200).url()
-    : "https://picsum.photos/1200/800";
+    ? urlFor(drink.mainImage).width(400).auto('format').url()
+    : "https://picsum.photos/400";
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className="min-h-screen pt-32 pb-20 px-6 bg-lab-white relative z-10"
+      className="min-h-screen pt-32 pb-20 px-6 bg-transparent relative z-10"
     >
       <div className="max-w-6xl mx-auto">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-slate-400 hover:text-lab-dark mb-10 transition-colors group">

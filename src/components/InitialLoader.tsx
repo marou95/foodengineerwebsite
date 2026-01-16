@@ -25,7 +25,7 @@ const InitialLoader: React.FC = () => {
             initial={{ opacity: 1 }}
             exit={{
                 opacity: 0,
-                pointerEvents: 'none', // Rend l'élément traversable par les clics
+                pointerEvents: 'none',
                 transition: { duration: 0.8 }
             }}
             className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-lab-white"
