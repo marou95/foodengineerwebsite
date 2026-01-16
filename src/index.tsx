@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './src/App';
-import './src/services/i18n'; // Initialize i18n
+import App from './App';
+import './services/i18n'; // Initialize i18n
+import './index.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

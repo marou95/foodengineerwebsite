@@ -1,47 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ArrowRight, Send, Linkedin, Instagram } from 'lucide-react';
+import { ArrowRight, Send, Linkedin, Instagram, AlertCircle, Info, RefreshCw } from 'lucide-react';
 
 import Navbar from './components/Navbar';
 import LiquidBackground from './components/LiquidBackground';
 import DrinkCard from './components/DrinkCard';
 import HeroFloatingElements from './components/HeroFloatingElements';
-import { getDrinks, getPosts } from './services/sanity.client';
+import { getDrinks, getPosts, urlFor, client } from './services/sanity.client';
 import { DrinkProject, BlogPost } from './types';
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
-  // Safe language access with fallback to 'en'
   const lang = (i18n.language || 'en') as 'en' | 'tr';
   
   const [drinks, setDrinks] = useState<DrinkProject[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUsingMocks, setIsUsingMocks] = useState(false);
+  const [tokenMissing, setTokenMissing] = useState(false);
 
-  // Fetch Data from Sanity (or Mock)
+  // Fetch Data from Sanity
   useEffect(() => {
     const fetchData = async () => {
+      // Check if token is loaded in client config
+      // @ts-ignore - Accessing internal config for diagnostic
+      const configToken = client.config().token;
+      if (!configToken) {
+        setTokenMissing(true);
+      }
+
       const [drinksData, postsData] = await Promise.all([getDrinks(), getPosts()]);
       setDrinks(drinksData);
       setPosts(postsData);
+      
+      const hasMockId = drinksData.some(d => d._id === '1' || d._id === '2');
+      if (hasMockId) setIsUsingMocks(true);
+
       setLoading(false);
     };
     fetchData();
   }, []);
 
-  /**
-   * Smooth Scroll Handler
-   * Replicated from Navbar logic to ensure the "Explore Portfolio" button
-   * respects the fixed header height when scrolling.
-   */
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.replace('#', '');
     const element = document.getElementById(targetId);
 
     if (element) {
-      const navHeight = 85; // Height of fixed navbar + breathing room
+      const navHeight = 85; 
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.scrollY - navHeight;
 
@@ -54,18 +61,37 @@ const App: React.FC = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Base Layer: Background Color + Animation (z-0) */}
       <LiquidBackground />
-      
-      {/* Navigation (Fixed, z-50) */}
       <Navbar />
 
-      {/* Main Content Layer (z-10) to sit above background */}
+      {/* ERROR BANNER: Token Missing */}
+      {tokenMissing && (
+        <div className="fixed bottom-0 left-0 right-0 z-[70] bg-red-600 text-white p-4 shadow-lg flex items-center justify-center gap-4 animate-bounce-slow">
+           <AlertCircle size={24} />
+           <div className="text-center">
+             <p className="font-bold uppercase">Restart Required / Redémarrage Requis</p>
+             <p className="text-sm">The .env file was created but the API Token is not loaded. Please stop the terminal and run <code>npm run dev</code> again.</p>
+           </div>
+           <button onClick={() => window.location.reload()} className="bg-white/20 p-2 rounded-full hover:bg-white/30">
+             <RefreshCw size={20} />
+           </button>
+        </div>
+      )}
+
+      {/* ERROR BANNER: Mock Mode (Only if token is present but fetch failed) */}
+      {isUsingMocks && !loading && !tokenMissing && (
+        <div className="fixed bottom-0 left-0 right-0 z-[60] bg-orange-500/90 backdrop-blur-md text-white text-xs py-2 px-4 text-center flex justify-center items-center gap-2">
+          <Info size={14} />
+          <span>
+            <b>Demo Mode:</b> Connected to Sanity, but using mock data. Check your dataset permissions or CORS settings.
+          </span>
+        </div>
+      )}
+
       <main className="relative z-10">
 
         {/* --- HERO SECTION --- */}
         <section className="relative h-screen flex items-center justify-center px-6 pt-20 overflow-hidden">
-          {/* Floating Engineering Elements */}
           <HeroFloatingElements />
 
           <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -84,7 +110,6 @@ const App: React.FC = () => {
               transition={{ delay: 0.5, duration: 1 }}
               className="text-lg md:text-2xl text-slate-600 font-light max-w-2xl mx-auto mb-10 leading-relaxed"
             >
-              {/* Realistic Highlighter Effect */}
               <span className="relative inline-block whitespace-nowrap mr-2 font-medium text-slate-800">
                 <span className="relative z-10">{t('hero.role')}</span>
                 <motion.span 
@@ -123,10 +148,11 @@ const App: React.FC = () => {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loading 
-              ? <div className="col-span-3 text-center py-20 text-slate-500">Loading formulations...</div> 
-              : drinks.map((drink) => <DrinkCard key={drink._id} project={drink} />)
-            }
+            {loading ? (
+              <div className="col-span-3 text-center py-20 text-slate-500">
+                <div className="animate-pulse">Loading formulations...</div>
+              </div>
+            ) : drinks.map((drink) => <DrinkCard key={drink._id} project={drink} />)}
           </div>
         </section>
 
@@ -138,37 +164,46 @@ const App: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {posts.map((post) => (
-                <motion.article 
-                  key={post._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="flex flex-col md:flex-row gap-6 group cursor-pointer"
-                >
-                  <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shadow-md">
-                     <img 
-                      src={`https://picsum.photos/300/300?random=${post._id}blog`} 
-                      alt="Blog thumbnail" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                     />
-                  </div>
-                  <div className="flex-1 flex flex-col justify-center">
-                    <span className="text-xs font-bold text-lab-citrus uppercase tracking-wider mb-2">
-                      {post.publishedAt}
-                    </span>
-                    <h3 className="text-xl font-serif font-semibold text-lab-dark mb-3 group-hover:text-lab-citrus transition-colors">
-                      {post.title[lang]}
-                    </h3>
-                    <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                      {post.excerpt[lang]}
-                    </p>
-                    <span className="text-xs font-bold underline decoration-lab-mint underline-offset-4">
-                      {t('blog.read_more')}
-                    </span>
-                  </div>
-                </motion.article>
-              ))}
+              {posts.map((post) => {
+                 const sanityUrl = post.mainImage?.asset?._ref 
+                    ? urlFor(post.mainImage).width(400).height(400).url() 
+                    : null;
+                 const imageUrl = sanityUrl || `https://picsum.photos/300/300?random=${post._id}blog`;
+
+                 return (
+                  <motion.article 
+                    key={post._id}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    className="flex flex-col md:flex-row gap-6 group cursor-pointer"
+                  >
+                    <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shadow-md">
+                      <img 
+                        src={imageUrl}
+                        alt="Blog thumbnail" 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <span className="text-xs font-bold text-lab-citrus uppercase tracking-wider mb-2">
+                        {post.publishedAt 
+                          ? new Date(post.publishedAt).toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-US')
+                          : 'Draft'}
+                      </span>
+                      <h3 className="text-xl font-serif font-semibold text-lab-dark mb-3 group-hover:text-lab-citrus transition-colors">
+                        {post.title?.[lang] || 'Untitled'}
+                      </h3>
+                      <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                        {post.excerpt?.[lang] || ''}
+                      </p>
+                      <span className="text-xs font-bold underline decoration-lab-mint underline-offset-4">
+                        {t('blog.read_more')}
+                      </span>
+                    </div>
+                  </motion.article>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -203,7 +238,6 @@ const App: React.FC = () => {
             </form>
           </div>
           
-          {/* Footer */}
           <footer className="mt-20 flex flex-col items-center gap-4 text-slate-400">
              <div className="flex gap-6">
                <a href="#" className="hover:text-lab-dark transition-colors"><Linkedin size={24} /></a>
