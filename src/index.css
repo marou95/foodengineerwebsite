@@ -10,7 +10,6 @@
 
 @layer base {
 
-  /* Supprime la barre sur l'élément qui a la classe .scrollbar-hide */
   .scrollbar-hide {
     -ms-overflow-style: none !important;
     /* IE and Edge */

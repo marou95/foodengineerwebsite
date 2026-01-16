@@ -150,7 +150,7 @@ const App: React.FC = () => {
             <a href="#" className="hover:text-lab-dark transition-colors"><Linkedin size={24} /></a>
             <a href="#" className="hover:text-lab-dark transition-colors"><Instagram size={24} /></a>
           </div>
-          <p className="text-xs">© 2024 The Flavour Lab. All rights reserved.</p>
+          <p className="text-xs">© {new Date().getFullYear()} Melisa Mumcu. All rights reserved.</p>
         </footer>
       </section>
     </main>
