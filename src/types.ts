@@ -28,13 +28,14 @@ export interface DrinkProject {
 
 export interface BlogPost {
   _id: string;
-  title: LocaleString;
-  slug: { current: string };
-  mainImage: SanityImage;
+  title: { en: string; tr: string };
+  slug: { current: string }; // S'assurer que c'est bien présent
+  excerpt: { en: string; tr: string };
+  content?: any; // Pour le texte riche de Sanity
+  mainImage?: {
+    asset: { _ref: string };
+  };
   publishedAt: string;
-  excerpt: LocaleString;
-  // In a real app, body would be PortableText
-  body?: any; 
 }
 
 // Navigation Item
