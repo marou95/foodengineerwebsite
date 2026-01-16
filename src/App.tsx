@@ -12,6 +12,8 @@ import DrinkDetail from './components/DrinkDetail';
 import BlogPostDetail from './components/BlogPostDetail';
 import { getDrinks, getPosts, urlFor } from './services/sanity.client';
 import { DrinkProject, BlogPost } from './types';
+import { AnimatePresence } from 'framer-motion';
+import InitialLoader from './components/InitialLoader';
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -125,22 +127,22 @@ const App: React.FC = () => {
           <h2 className="font-serif text-4xl text-lab-dark mb-12">{t('blog.title')}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {posts.map((post) => {
-               const slug = post.slug?.current;
-               const imageUrl = post.mainImage?.asset?._ref 
-                 ? urlFor(post.mainImage).width(400).height(400).url() 
-                 : `https://picsum.photos/400/400?random=${post._id}`;
+              const slug = post.slug?.current;
+              const imageUrl = post.mainImage?.asset?._ref
+                ? urlFor(post.mainImage).width(400).height(400).url()
+                : `https://picsum.photos/400/400?random=${post._id}`;
 
-               return (
-                <Link 
-                  to={slug ? `/blog/${slug}` : '#'} 
-                  key={post._id} 
+              return (
+                <Link
+                  to={slug ? `/blog/${slug}` : '#'}
+                  key={post._id}
                   className="flex flex-col md:flex-row gap-6 group cursor-pointer"
                 >
                   <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shadow-md flex-shrink-0">
-                    <img 
-                      src={imageUrl} 
-                      alt="" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    <img
+                      src={imageUrl}
+                      alt=""
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="flex-1 flex flex-col justify-center">
@@ -194,10 +196,14 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="relative min-h-screen overflow-hidden bg-lab-white">
+        {/* 1. ON AJOUTE LE LOADER ICI AVEC ANIMATEPRESENCE */}
+        <AnimatePresence>
+          {loading && <InitialLoader />}
+        </AnimatePresence>
         <LiquidBackground />
         {/* La Navbar doit être à l'intérieur du Router pour utiliser Link et useNavigate */}
         <Navbar />
-        
+
         {isUsingMocks && !loading && (
           <div className="fixed bottom-0 left-0 right-0 z-[60] bg-orange-500/90 backdrop-blur-md text-white text-xs py-2 px-4 text-center">
             <span><b>Demo Mode:</b> Connected to Sanity, but using mock data.</span>
