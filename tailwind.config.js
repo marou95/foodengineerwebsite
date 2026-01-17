@@ -10,7 +10,7 @@ export default {
         lab: {
           white: '#F8FAFC', // Lab Coat White
           mint: '#A7F3D0',  // Fresh Mint
-          citrus: '#FDBA74', // Citrus Orange
+          citrus: '#F97316', // Citrus Orange
           water: '#BAE6FD', // Water Blue
           text: '#334155',  // Slate 700
           dark: '#0F172A',  // Slate 900

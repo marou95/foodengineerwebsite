@@ -9,13 +9,12 @@ import { BlogPost } from '../types';
 const BlogArchive: React.FC = () => {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language || 'en') as 'en' | 'tr';
-  
+
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // --- LOGIQUE DE PAGINATION ---
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 6; // Limite à 6 cards par page
+  const postsPerPage = 6;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,7 +52,7 @@ const BlogArchive: React.FC = () => {
   }
 
   return (
-    <motion.main 
+    <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="relative z-10 min-h-screen pt-32 pb-20 px-6"
@@ -90,16 +89,16 @@ const BlogArchive: React.FC = () => {
                 >
                   <Link to={`/blog/${slug}`} className="group block h-full bg-white/40 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/50 hover:shadow-2xl transition-all duration-500">
                     <div className="aspect-[4/3] overflow-hidden">
-                      <img 
-                        src={imageUrl} 
+                      <img
+                        src={imageUrl}
                         loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                        alt={post.title?.[lang] || ''} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        alt={post.title?.[lang] || ''}
                       />
                     </div>
                     <div className="p-8">
                       <div className="flex items-center gap-2 text-[10px] font-bold text-lab-citrus uppercase tracking-widest mb-4">
-                        <Calendar size={12}/> 
+                        <Calendar size={12} />
                         {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Recent'}
                       </div>
                       <h3 className="font-serif text-2xl text-lab-dark mb-4 group-hover:text-lab-citrus transition-colors line-clamp-2">
@@ -135,8 +134,8 @@ const BlogArchive: React.FC = () => {
                   key={number}
                   onClick={() => paginate(number)}
                   className={`w-10 h-10 rounded-full font-bold text-sm transition-all
-                    ${currentPage === number 
-                      ? 'bg-lab-dark text-white shadow-lg' 
+                    ${currentPage === number
+                      ? 'bg-lab-dark text-white shadow-lg'
                       : 'text-slate-400 hover:bg-white hover:text-lab-dark'}`}
                 >
                   {number}

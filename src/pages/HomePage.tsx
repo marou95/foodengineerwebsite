@@ -6,8 +6,6 @@ import { Link } from 'react-router-dom';
 
 // Components
 import DrinkCard from '../components/DrinkCard';
-// import HeroFloatingElements from '../components/HeroFloatingElements';
-
 // Services & Types
 import { urlFor } from '../services/sanity.client';
 import { DrinkProject, BlogPost } from '../types';
@@ -123,7 +121,7 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
                             className="flex items-center gap-3 mb-6"
                         >
                             <span className="h-[1px] w-12 bg-lab-citrus" />
-                            <span className="text-lab-citrus font-bold uppercase tracking-widest text-sm">
+                            <span className="text-lab-citrus font-bold uppercase backdrop-blur-xl tracking-widest text-sm">
                                 {t('hero.role')}
                             </span>
                         </motion.div>
