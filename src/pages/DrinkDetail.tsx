@@ -66,7 +66,7 @@ const DrinkDetail: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         <button onClick={() => navigate('/')} className="flex items-center gap-2 text-slate-400 hover:text-lab-dark mb-10 transition-colors group">
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          {t('Back') || 'Back'}
+          {t('nav.back')}
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">

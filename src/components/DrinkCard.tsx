@@ -17,7 +17,7 @@ const DrinkCard: React.FC<DrinkCardProps> = ({ project }) => {
   const slug = project.slug?.current;
 
   const imageUrl = project.mainImage?.asset?._ref 
-    ? urlFor(project.mainImage).width(400).auto('format').url()
+    ? urlFor(project.mainImage).width(300).auto('format').url()
     : "https://picsum.photos/400/600" + '?random=' + project._id;
 
   return (

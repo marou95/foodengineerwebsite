@@ -48,7 +48,7 @@ const BlogPostDetail: React.FC = () => {
         <h2 className="text-2xl font-serif mb-4 text-lab-dark">Journal Entry Not Found</h2>
         <p className="text-slate-500 mb-8">The requested formulation report is missing.</p>
         <button onClick={() => navigate('/')} className="bg-lab-dark text-white px-8 py-3 rounded-full flex items-center gap-2">
-          <ArrowLeft size={18} /> {t('common.back')}
+          <ArrowLeft size={18} /> {t('nav.back')}
         </button>
       </div>
     );
@@ -67,11 +67,11 @@ const BlogPostDetail: React.FC = () => {
       <article className="max-w-3xl mx-auto">
         {/* Navigation */}
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/blog')}
           className="flex items-center gap-2 text-slate-400 hover:text-lab-dark mb-10 transition-colors group"
         >
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          {t('Back')}
+          {t('nav.back')}
         </button>
 
         {/* Header */}

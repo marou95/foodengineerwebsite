@@ -9,12 +9,14 @@ const resources = {
         title: "Melisa Mumcu",
         role: "Food Engineer.",
         description: "Designing the future of beverages through molecular engineering and sensory science.",
-        cta: "Explore Portfolio"
+        cta: "Explore Portfolio",
+        bio: "Food Engineer specialized in beverage formulation and R&D. From laboratory analysis to industrial scale-up, I bridge the gap between scientific innovation and sensory delight."
       },
       nav: {
         portfolio: "Formulations",
         blog: "Lab Notes",
-        contact: "Contact"
+        contact: "Contact",
+        back: "Go back"
       },
       portfolio: {
         title: "Selected Formulations",
@@ -25,7 +27,8 @@ const resources = {
       },
       blog: {
         title: "Lab Journal",
-        read_more: "Read Analysis"
+        read_more: "Read Analysis",
+        archiveIntro: "Complete technical archive of formulation reports and food engineering research."
       },
       contact: {
         title: "Contact Me",
@@ -43,12 +46,14 @@ const resources = {
         title: "Melisa Mumcu",
         role: "Gıda Mühendisi.",
         description: "Moleküler mühendislik ve duyusal bilim ile içeceklerin geleceğini tasarlıyoruz.",
-        cta: "Portfolyoyu Keşfet"
+        cta: "Portfolyoyu Keşfet",
+        bio: "İçecek formülasyonu ve Ar-Ge konusunda uzmanlaşmış Gıda Mühendisi. Laboratuvar analizinden endüstriyel ölçeklendirmeye kadar, bilimsel yenilik ile duyusal zevk arasında köprü kuruyorum."
       },
       nav: {
         portfolio: "Formülasyonlar",
         blog: "Lab Notları",
-        contact: "İletişim"
+        contact: "İletişim",
+        back: "Geri Dön"
       },
       portfolio: {
         title: "Seçilmiş Formülasyonlar",
@@ -59,7 +64,8 @@ const resources = {
       },
       blog: {
         title: "Lab Günlüğü",
-        read_more: "Analizi Oku"
+        read_more: "Analizi Oku",
+        archiveIntro: "Formülasyon raporları ve gıda mühendisliği araştırmalarının tam teknik arşivi."
       },
       contact: {
         title: "Bana yazın",

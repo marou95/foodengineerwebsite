@@ -7,9 +7,6 @@ import { motion } from 'framer-motion';
  * Contains the white background color AND the animated mixology orbs.
  */
 const LiquidBackground: React.FC = () => {
-  useEffect(() => {
-    console.log('LiquidBackground mounted and active');
-  }, []);
 
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-lab-white">

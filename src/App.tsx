@@ -5,15 +5,15 @@ import { AnimatePresence } from 'framer-motion';
 // Components
 import Navbar from './components/Navbar';
 import LiquidBackground from './components/LiquidBackground';
-import InitialLoader from './components/InitialLoader';
 
 // Pages
-import HomePage from './components/HomePage';
-import DrinkDetail from './components/DrinkDetail';
-import BlogPostDetail from './components/BlogPostDetail';
+import HomePage from './pages/HomePage';
+import DrinkDetail from './pages/DrinkDetail';
+import BlogPostDetail from './pages/BlogPostDetail';
+import BlogArchive from './pages/BlogArchive';
 
 // Services & Types
-import { getDrinks, getPosts } from './services/sanity.client';
+import { getDrinks, getRecentPosts } from './services/sanity.client';
 import { DrinkProject, BlogPost } from './types';
 
 const App: React.FC = () => {
@@ -23,36 +23,38 @@ const App: React.FC = () => {
   const [showBackground, setShowBackground] = useState(false);
 
   // Fetch Data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [drinksData, postsData] = await Promise.all([getDrinks(), getPosts()]);
-        setDrinks(drinksData);
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      // 1. On charge d'abord les boissons (Priorité haute)
+      const drinksData = await getDrinks();
+      setDrinks(drinksData);
+      setLoading(false); // On cache le loader DÈS QUE les boissons sont là !
+
+      // 2. On charge le blog en arrière-plan (Priorité basse)
+      // On peut même ajouter un petit délai pour laisser respirer le navigateur
+      setTimeout(async () => {
+        const postsData = await getRecentPosts();
         setPosts(postsData);
-      } catch (error) {
-        console.error("Sanity Fetch Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+      }, 300);
+      
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setLoading(false);
+    }
+  };
+  loadData();
+}, []);
 
   // Background performance optimization
   useEffect(() => {
-    const timer = setTimeout(() => setShowBackground(true), 1000);
+    const timer = setTimeout(() => setShowBackground(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <Router>
       <div className="relative min-h-screen bg-lab-white">
-        
-        {/* Loading Overlay */}
-        <AnimatePresence>
-          {loading && <InitialLoader />}
-        </AnimatePresence>
-
         {/* Dynamic Background */}
         {showBackground && <LiquidBackground />}
 
@@ -67,6 +69,7 @@ const App: React.FC = () => {
           />
           <Route path="/drink/:slug" element={<DrinkDetail />} />
           <Route path="/blog/:slug" element={<BlogPostDetail />} />
+          <Route path="/blog" element={<BlogArchive />} />
         </Routes>
 
       </div>

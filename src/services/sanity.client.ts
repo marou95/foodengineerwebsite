@@ -24,9 +24,15 @@ export const getDrinkBySlug = async (slug: string): Promise<DrinkProject> => {
   );
 };
 
+// Charge tous les posts du blog
 export const getPosts = async (): Promise<BlogPost[]> => {
   return await client.fetch(`*[_type == "post"] | order(publishedAt desc)`);
 };
+
+// Charge les 4 posts les plus récents
+export const getRecentPosts = async () => {
+  return await client.fetch(`*[_type == "post"] | order(publishedAt desc) [0...4]`);
+}
 
 export const getPostBySlug = async (slug: string): Promise<BlogPost> => {
   return await client.fetch(
