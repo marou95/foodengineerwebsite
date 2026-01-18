@@ -6,6 +6,8 @@ import { ArrowLeft, Beaker, Droplets, Activity } from 'lucide-react';
 import { getDrinkBySlug, urlFor } from '../services/sanity.client';
 import { DrinkProject } from '../types';
 
+const DEFAULT_IMAGE = "/images/default.jpg";
+
 const DrinkDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -22,7 +24,7 @@ const DrinkDetail: React.FC = () => {
           const data = await getDrinkBySlug(slug);
           setDrink(data);
         } catch (error) {
-          console.error("Error fetching drink detail:", error);
+          console.error("Error fetching drink:", error);
         } finally {
           setLoading(false);
         }
@@ -35,82 +37,119 @@ const DrinkDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="h-screen flex items-center justify-centerbg-transparent">
-        <p className="font-serif text-xl animate-pulse">Analysing Lab Records...</p>
+      <div className="h-screen flex items-center justify-center bg-transparent">
+        <p className="font-serif text-xl animate-pulse text-lab-dark">Analysing...</p>
       </div>
     );
   }
 
-  // Si on arrive ici avec slug="undefined" ou si Sanity n'a rien trouvé
-  if (!drink) {
-    return (
-      <div className="h-screen flex flex-col items-center justify-center bg-transparent p-6 text-center">
-        <h2 className="text-2xl font-serif mb-4">Formulation Not Found</h2>
-        <p className="text-slate-500 mb-8">Something went wrong.</p>
-        <button onClick={() => navigate('/')} className="bg-lab-dark text-white px-6 py-3 rounded-full">
-          Return to Laboratory
-        </button>
-      </div>
-    );
-  }
+  if (!drink) return null;
 
+  // MODIFICATION 1 : On demande une image moins haute (800px au lieu de 1000px)
   const imageUrl = drink.mainImage?.asset?._ref
-    ? urlFor(drink.mainImage).width(400).auto('format').url()
-    : "https://picsum.photos/400";
+    ? urlFor(drink.mainImage).height(800).fit('max').auto('format').url()
+    : DEFAULT_IMAGE;
 
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-      className="min-h-screen pt-32 pb-20 px-6 bg-transparent relative z-10"
+      className="min-h-screen pt-28 pb-20 px-6 bg-transparent relative z-10"
     >
-      <div className="max-w-6xl mx-auto">
-        <button onClick={() => navigate('/')} className="flex items-center gap-2 text-slate-400 hover:text-lab-dark mb-10 transition-colors group">
-          <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-          {t('nav.back')}
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Navigation */}
+        <button onClick={() => navigate('/')} className="flex items-center gap-1 text-slate-400 hover:text-lab-dark mb-8 text-sm font-bold uppercase tracking-wider transition-colors">
+          <ArrowLeft size={16} /> {t('nav.back') || 'Back'}
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {/* IMAGE */}
-          <div className="relative">
-            <div className="absolute -inset-4 bg-lab-mint/10 blur-3xl rounded-full opacity-50" />
-            <img src={imageUrl} alt="" className="relative rounded-3xl w-full shadow-2xl border border-white" />
+        {/* --- LAYOUT HYBRIDE --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-24 items-center">
+          
+          {/* --- VERSION MOBILE --- */}
+          <div className="lg:hidden mb-12">
+            <span className="text-lab-citrus font-bold tracking-[0.2em] uppercase text-[10px] mb-2 block">
+                {drink.client || 'Lab Project'}
+            </span>
+            <div className="flex items-center justify-between gap-6">
+                <div className="flex-1">
+                    <h1 className="font-serif text-4xl text-lab-dark leading-tight">
+                        {drink.title?.[lang]}
+                    </h1>
+                </div>
+                <div className="w-[120px] h-[160px] flex-shrink-0 relative">
+                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 bg-lab-mint/20 rounded-full blur-xl" />
+                     <img 
+                        src={imageUrl} 
+                        alt="" 
+                        // J'ai aussi ajouté un arrondi ici pour la cohérence
+                        className="w-full h-full object-contain rounded-xl drop-shadow-xl relative z-10 rotate-3" 
+                     />
+                </div>
+            </div>
+            <div className="w-full h-[1px] bg-gradient-to-r from-lab-mint to-transparent mt-8" />
           </div>
 
-          {/* CONTENT */}
-          <div>
-            <span className="text-lab-citrus font-bold tracking-widest uppercase text-xs mb-4 block">
-              {drink.client || 'Döhler Project'}
-            </span>
-            <h1 className="font-serif text-5xl text-lab-dark mb-8">
-              {drink.title?.[lang] || 'Untitled Formulation'}
-            </h1>
-            <p className="text-xl text-slate-600 font-light leading-relaxed mb-12">
-              {drink.description?.[lang] || 'No description provided.'}
-            </p>
 
-            {/* SPECS */}
-            <div className="grid grid-cols-2 gap-4 mb-10">
-              <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                <Droplets className="text-lab-water mb-2" size={24} />
-                <span className="block text-xs text-slate-400 uppercase font-bold">pH Level</span>
-                <span className="text-2xl font-mono text-lab-dark">{drink.specs?.ph || '--'}</span>
-              </div>
-              <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                <Activity className="text-lab-citrus mb-2" size={24} />
-                <span className="block text-xs text-slate-400 uppercase font-bold">Brix Value</span>
-                <span className="text-2xl font-mono text-lab-dark">{drink.specs?.brix || '--'}°</span>
-              </div>
+          {/* --- VERSION DESKTOP : IMAGE FLOTTANTE (Corrigée) --- */}
+          {/* MODIFICATION 2 : Hauteur réduite de h-[650px] à h-[550px] */}
+          <div className="hidden lg:flex relative h-[550px] w-full items-center justify-center group">
+             
+             {/* Lumière d'ambiance (Glow) */}
+             <div className="absolute inset-20 bg-lab-mint/30 blur-[100px] rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-700" />
+             
+             {/* L'image produit */}
+             <img 
+                src={imageUrl} 
+                alt={drink.title?.[lang]} 
+                // MODIFICATION 3 : Ajout de rounded-2xl (xl faisait un peu juste avec l'ombre)
+                className="relative z-10 h-full w-auto object-contain rounded-2xl drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500 ease-out" 
+            />
+          </div>
+
+
+          {/* ZONE 2 : CONTENU DÉTAILLÉ (Inchangé) */}
+          <div className="flex flex-col justify-center">
+            {/* ... reste du contenu texte ... */}
+            <div className="hidden lg:block mb-12">
+                <span className="text-lab-citrus font-bold tracking-[0.2em] uppercase text-xs mb-4 block flex items-center gap-2">
+                  <span className="w-8 h-[2px] bg-lab-citrus"></span>
+                  {drink.client || 'Internal Project'}
+                </span>
+                <h1 className="font-serif text-6xl md:text-7xl text-lab-dark leading-tight">
+                {drink.title?.[lang] || 'Untitled'}
+                </h1>
             </div>
 
-            {/* INGREDIENTS */}
+            <p className="text-lg md:text-xl text-slate-600 font-light leading-relaxed mb-12">
+              {drink.description?.[lang] || 'No technical description provided.'}
+            </p>
+
+            <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] p-8 border border-white shadow-xl shadow-lab-mint/10 mb-12">
+                <div className="grid grid-cols-2 divide-x divide-slate-200/50">
+                    <div className="px-6 flex flex-col items-center justify-center text-center">
+                        <span className="flex items-center gap-2 text-xs font-black uppercase text-slate-400 tracking-wider mb-2">
+                            <Droplets size={14} className="text-lab-water"/> pH Level
+                        </span>
+                        <span className="text-4xl font-mono text-lab-dark font-bold">{drink.specs?.ph || '--'}</span>
+                    </div>
+                    <div className="px-6 flex flex-col items-center justify-center text-center">
+                        <span className="flex items-center gap-2 text-xs font-black uppercase text-slate-400 tracking-wider mb-2">
+                            <Activity size={14} className="text-lab-citrus"/> Brix Value
+                        </span>
+                        <span className="text-4xl font-mono text-lab-dark font-bold">{drink.specs?.brix || '--'}°</span>
+                    </div>
+                </div>
+            </div>
+
             {drink.specs?.ingredients && (
-              <div className="space-y-4">
-                <h3 className="flex items-center gap-2 font-bold text-lab-dark text-xs uppercase tracking-widest">
-                  <Beaker size={18} className="text-lab-mint" /> Ingredients
+              <div className="space-y-6 pl-2">
+                <h3 className="flex items-center gap-3 font-bold text-lab-dark text-sm uppercase tracking-[0.15em] opacity-80">
+                  <Beaker size={18} className="text-lab-mint" /> Key Compounds
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {drink.specs.ingredients.map((ing, i) => (
-                    <span key={i} className="px-4 py-2 bg-lab-mint/5 border border-lab-mint/10 rounded-full text-sm">
+                    <span key={i} className="pl-4 pr-5 py-2.5 bg-white border-2 border-slate-100/80 rounded-full text-sm font-semibold text-slate-700 shadow-sm flex items-center gap-2 hover:border-lab-mint/30 transition-colors cursor-default">
+                      <span className="w-2 h-2 rounded-full bg-lab-mint shadow-sm shadow-lab-mint/50" />
                       {ing}
                     </span>
                   ))}
@@ -118,6 +157,7 @@ const DrinkDetail: React.FC = () => {
               </div>
             )}
           </div>
+
         </div>
       </div>
     </motion.div>

@@ -219,7 +219,7 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
                             const slug = post.slug?.current;
                             const imageUrl = post.mainImage?.asset?._ref
                                 ? urlFor(post.mainImage).width(500).height(400).url()
-                                : `https://picsum.photos/500/400?random=${post._id}`;
+                                : "/images/default.jpg";
 
                             return (
                                 <Link

@@ -14,7 +14,7 @@ const resources = {
       },
       nav: {
         portfolio: "Formulations",
-        blog: "Lab Notes",
+        blog: "Lab Journal",
         contact: "Contact",
         back: "Go back"
       },
@@ -51,7 +51,7 @@ const resources = {
       },
       nav: {
         portfolio: "Formülasyonlar",
-        blog: "Lab Notları",
+        blog: "Lab Günlüğü",
         contact: "İletişim",
         back: "Geri Dön"
       },

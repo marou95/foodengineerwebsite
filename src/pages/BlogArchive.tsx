@@ -77,7 +77,7 @@ const BlogArchive: React.FC = () => {
               const slug = post.slug?.current;
               const imageUrl = post.mainImage?.asset?._ref
                 ? urlFor(post.mainImage).width(500).quality(80).auto('format').url()
-                : `https://picsum.photos/500/400?random=${post._id}`;
+                : "/images/default.jpg";
 
               return (
                 <motion.div
@@ -87,7 +87,7 @@ const BlogArchive: React.FC = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Link to={`/blog/${slug}`} className="group block h-full bg-white/40 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/50 hover:shadow-2xl transition-all duration-500">
+                  <Link to={`/blog/${slug}`} className="group block h-full bg-white/40 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/20 hover:shadow-2xl transition-all duration-500">
                     <div className="aspect-[4/3] overflow-hidden">
                       <img
                         src={imageUrl}
@@ -97,7 +97,7 @@ const BlogArchive: React.FC = () => {
                       />
                     </div>
                     <div className="p-8">
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-lab-citrus uppercase tracking-widest mb-4">
+                      <div className="flex items-center gap-2 text-[14px] font-bold text-lab-citrus uppercase tracking-widest mb-4">
                         <Calendar size={12} />
                         {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Recent'}
                       </div>

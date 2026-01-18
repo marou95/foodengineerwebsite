@@ -22,16 +22,16 @@ export interface DrinkProject {
   specs: {
     ph: number;
     brix: number;
-    ingredients: string[]; // Simple array for demo
+    ingredients: string[];
   };
 }
 
 export interface BlogPost {
   _id: string;
   title: { en: string; tr: string };
-  slug: { current: string }; // S'assurer que c'est bien présent
+  slug: { current: string };
   excerpt: { en: string; tr: string };
-  content?: any; // Pour le texte riche de Sanity
+  content?: any;
   mainImage?: {
     asset: { _ref: string };
   };
@@ -40,6 +40,6 @@ export interface BlogPost {
 
 // Navigation Item
 export interface NavItem {
-  label: string; // Translation key
+  label: string;
   href: string;
 }
