@@ -45,7 +45,6 @@ const DrinkDetail: React.FC = () => {
 
   if (!drink) return null;
 
-  // MODIFICATION 1 : On demande une image moins haute (800px au lieu de 1000px)
   const imageUrl = drink.mainImage?.asset?._ref
     ? urlFor(drink.mainImage).height(800).fit('max').auto('format').url()
     : DEFAULT_IMAGE;
@@ -81,7 +80,6 @@ const DrinkDetail: React.FC = () => {
                      <img 
                         src={imageUrl} 
                         alt="" 
-                        // J'ai aussi ajouté un arrondi ici pour la cohérence
                         className="w-full h-full object-contain rounded-xl drop-shadow-xl relative z-10 rotate-3" 
                      />
                 </div>
@@ -90,26 +88,23 @@ const DrinkDetail: React.FC = () => {
           </div>
 
 
-          {/* --- VERSION DESKTOP : IMAGE FLOTTANTE (Corrigée) --- */}
-          {/* MODIFICATION 2 : Hauteur réduite de h-[650px] à h-[550px] */}
+          {/* --- VERSION DESKTOP : IMAGE FLOTTANTE --- */}
           <div className="hidden lg:flex relative h-[550px] w-full items-center justify-center group">
              
              {/* Lumière d'ambiance (Glow) */}
              <div className="absolute inset-20 bg-lab-mint/30 blur-[100px] rounded-full opacity-40 group-hover:opacity-60 transition-opacity duration-700" />
              
-             {/* L'image produit */}
+             {/* image produit */}
              <img 
                 src={imageUrl} 
                 alt={drink.title?.[lang]} 
-                // MODIFICATION 3 : Ajout de rounded-2xl (xl faisait un peu juste avec l'ombre)
                 className="relative z-10 h-full w-auto object-contain rounded-2xl drop-shadow-2xl hover:scale-[1.02] transition-transform duration-500 ease-out" 
             />
           </div>
 
 
-          {/* ZONE 2 : CONTENU DÉTAILLÉ (Inchangé) */}
+          {/* ZONE 2 : CONTENU DÉTAILLÉ */}
           <div className="flex flex-col justify-center">
-            {/* ... reste du contenu texte ... */}
             <div className="hidden lg:block mb-12">
                 <span className="text-lab-citrus font-bold tracking-[0.2em] uppercase text-xs mb-4 block flex items-center gap-2">
                   <span className="w-8 h-[2px] bg-lab-citrus"></span>
