@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
   };
 
   const navLinks = [
-    { name: t('nav.portfolio'), href: '#portfolio' },
+    { name: t('nav.journey'), href: '#journey' },
     { name: t('nav.blog'), href: '#blog' },
     { name: t('nav.contact'), href: '#contact' },
   ];

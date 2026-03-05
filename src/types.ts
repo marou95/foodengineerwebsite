@@ -6,24 +6,9 @@ export interface LocaleString {
 export interface SanityImage {
   asset: {
     _ref: string;
-    _type: string;
+    _type?: string; // Rendu optionnel pour éviter des erreurs avec les images par défaut
   };
   alt?: string;
-}
-
-export interface DrinkProject {
-  _id: string;
-  title: LocaleString;
-  client: string;
-  description: LocaleString;
-  slug: { current: string };
-  mainImage: SanityImage;
-  // Technical specs for the "Lab" feel
-  specs: {
-    ph: number;
-    brix: number;
-    ingredients: string[];
-  };
 }
 
 export interface BlogPost {
@@ -32,10 +17,22 @@ export interface BlogPost {
   slug: { current: string };
   excerpt: { en: string; tr: string };
   content?: any;
+  body?: { en: any[]; tr: any[] };
   mainImage?: {
     asset: { _ref: string };
   };
   publishedAt: string;
+  tags?: string[];
+}
+
+export interface JourneyStep {
+  _id: string;
+  order: number;
+  period: LocaleString;
+  role: LocaleString;
+  company: string;
+  description: { en: any[]; tr: any[] };
+  image?: SanityImage;
 }
 
 // Navigation Item

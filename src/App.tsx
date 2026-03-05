@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { motion } from 'framer-motion'; // <--- Import nécessaire
+import { motion } from 'framer-motion';
 
 // Components
 import Navbar from './components/Navbar';
@@ -8,16 +8,15 @@ import LiquidBackground from './components/LiquidBackground';
 
 // Pages
 import HomePage from './pages/HomePage';
-import DrinkDetail from './pages/DrinkDetail';
 import BlogPostDetail from './pages/BlogPostDetail';
 import BlogArchive from './pages/BlogArchive';
 
 // Services & Types
-import { getDrinks, getPosts } from './services/sanity.client';
-import { DrinkProject, BlogPost } from './types';
+import { getJourneySteps, getPosts } from './services/sanity.client';
+import { JourneyStep, BlogPost } from './types';
 
 const App: React.FC = () => {
-  const [drinks, setDrinks] = useState<DrinkProject[]>([]);
+  const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [showBackground, setShowBackground] = useState(false);
@@ -26,8 +25,8 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const drinksData = await getDrinks();
-        setDrinks(drinksData);
+        const journeyData = await getJourneySteps();
+        setJourneySteps(journeyData);
         setLoading(false); // UI débloquée rapidement
 
         setTimeout(async () => {
@@ -72,9 +71,8 @@ const App: React.FC = () => {
           <Routes>
             <Route
               path="/"
-              element={<HomePage drinks={drinks} posts={posts} loading={loading} />}
+              element={<HomePage journeySteps={journeySteps} posts={posts} loading={loading} />}
             />
-            <Route path="/drink/:slug" element={<DrinkDetail />} />
             <Route path="/blog/:slug" element={<BlogPostDetail />} />
             <Route path="/blog" element={<BlogArchive />} />
           </Routes>

@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, Send, Linkedin, Calendar, User } from 'lucide-react';
+import { ArrowRight, Send, Linkedin, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Components
-import DrinkCard from '../components/DrinkCard';
+import Journey from '../components/Journey';
+import LabJournal from '../components/JournalLab';
+
 // Services & Types
 import { urlFor } from '../services/sanity.client';
-import { DrinkProject, BlogPost } from '../types';
+import { JourneyStep, BlogPost } from '../types';
 
 interface HomePageProps {
-    drinks: DrinkProject[];
     posts: BlogPost[];
+    journeySteps: JourneyStep[];
     loading: boolean;
 }
 
-const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
+const HomePage: React.FC<HomePageProps> = ({ journeySteps = [], posts = [], loading }) => {
     const { t, i18n } = useTranslation();
     const lang = (i18n.language || 'en') as 'en' | 'tr';
 
-    // État du formulaire de contact
     const [formStatus, setFormStatus] = useState<'IDLE' | 'SENDING' | 'SUCCESS' | 'ERROR'>('IDLE');
 
-    // Gestion du scroll fluide interne
     const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         e.preventDefault();
         const targetId = href.replace('#', '');
@@ -36,11 +36,9 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
         }
     };
 
-    // Envoi du formulaire via Formspree
     const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setFormStatus('SENDING');
-
         const form = e.currentTarget;
         const formData = new FormData(form);
 
@@ -68,8 +66,6 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
             {/* --- HERO SECTION --- */}
             <section className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20 overflow-hidden">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 lg:gap-16 relative z-10">
-
-                    {/* COLONNE GAUCHE : PHOTO RONDE & BADGE */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -77,21 +73,15 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
                         className="relative w-full md:w-1/3 flex justify-center md:justify-end"
                     >
                         <div className="relative group">
-                            {/* Décoration de fond (halo mint) */}
                             <div className="absolute -inset-4 bg-lab-mint/20 rounded-full blur-2xl group-hover:bg-lab-mint/30 transition-all duration-700" />
-
-                            {/* Conteneur Photo Circulaire */}
                             <div className="relative w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-white shadow-2xl bg-white">
                                 <img
-                                    src="/images/picture.jpeg" // Ta photo
+                                    src="/images/picture.jpeg"
                                     alt="Melisa Mumcu"
                                     className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-500"
                                 />
-                                {/* Overlay très léger */}
                                 <div className="absolute inset-0 bg-lab-dark/5" />
                             </div>
-
-                            {/* Badge d'expérience ajusté pour le format rond */}
                             <motion.div
                                 animate={{ y: [0, -8, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -103,7 +93,6 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
                         </div>
                     </motion.div>
 
-                    {/* COLONNE DROITE : TEXTE & PARCOURS */}
                     <div className="w-full md:w-2/3 text-left">
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
@@ -142,125 +131,26 @@ const HomePage: React.FC<HomePageProps> = ({ drinks, posts, loading }) => {
                             className="flex flex-wrap gap-4"
                         >
                             <a
-                                href="#portfolio"
-                                onClick={(e) => handleSmoothScroll(e, '#portfolio')}
-                                className="inline-flex items-center gap-2 bg-lab-dark text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-all shadow-xl shadow-lab-mint/10"
+                                href="#journey"
+                                onClick={(e) => handleSmoothScroll(e, '#journey')}
+                                className="inline-flex items-center gap-2 bg-lab-dark text-white px-8 py-4 rounded-md font-bold hover:bg-slate-800 transition-all shadow-xl shadow-lab-mint/10"
                             >
                                 {t('hero.cta')} <ArrowRight size={18} />
                             </a>
                         </motion.div>
                     </div>
-
                 </div>
             </section>
-            {/* --- PORTFOLIO SECTION (Horizontal Scroll) --- */}
-            <section id="portfolio" className="py-24 overflow-hidden">
-                <div className="max-w-7xl mx-auto px-6 mb-16">
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="border-l-4 border-lab-citrus pl-6"
-                    >
-                        <h2 className="font-serif text-4xl text-lab-dark">{t('portfolio.title')}</h2>
-                    </motion.div>
-                </div>
 
-                <div
-                    className="flex gap-8 overflow-x-auto px-6 md:px-[calc((100vw-1280px)/2+24px)] snap-x snap-mandatory"
-                    style={{
-                        scrollbarWidth: 'none',
-                        msOverflowStyle: 'none',
-                        WebkitOverflowScrolling: 'touch'
-                    }}
-                >
-                    {loading ? (
-                        <div className="w-full text-center py-20 text-slate-400 animate-pulse font-serif italic text-xl">
-                            Calibrating Data...
-                        </div>
-                    ) : (
-                        drinks.map((drink) => (
-                            <div key={drink._id} className="flex-shrink-0 w-[280px] snap-center">
-                                <DrinkCard project={drink} />
-                            </div>
-                        ))
-                    )}
-                    <div className="flex-shrink-0 w-10 h-1"></div>
-                </div>
-
-                <style jsx>{`
-        div.overflow-x-auto::-webkit-scrollbar {
-            display: none;
-        }
-    `}</style>
-            </section>
+            {/* --- JOURNEY SECTION (Composant Importé) --- */}
+            <Journey journeySteps={journeySteps} loading={loading} />
 
             {/* --- BLOG SECTION (Lab Journal) --- */}
-            <section id="blog" className="py-24 bg-white/20 backdrop-blur-sm border-y border-white/20">
-                <div className="max-w-7xl mx-auto px-6">
+            <LabJournal posts={posts} />
 
-                    {/* Titre transformé en Lien vers l'archive */}
-                    <Link to="/blog" className="group inline-block mb-12">
-                        <motion.h2
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            className="font-serif text-4xl text-lab-dark group-hover:text-lab-citrus transition-colors flex items-center gap-4"
-                        >
-                            {t('blog.title')}
-                            <ArrowRight
-                                size={24}
-                                className="opacity-1 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-lab-citrus"
-                            />
-                        </motion.h2>
-                    </Link>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        {posts.map((post) => {
-                            const slug = post.slug?.current;
-                            const imageUrl = post.mainImage?.asset?._ref
-                                ? urlFor(post.mainImage).width(500).height(400).url()
-                                : "/images/default.jpg";
-
-                            return (
-                                <Link
-                                    key={post._id}
-                                    to={slug ? `/blog/${slug}` : '#'}
-                                    className="flex flex-col md:flex-row gap-6 group cursor-pointer"
-                                >
-                                    {/* ... reste du code des cartes d'articles ... */}
-                                    <div className="w-full md:w-48 h-48 rounded-2xl overflow-hidden shadow-lg flex-shrink-0">
-                                        <img
-                                            src={imageUrl}
-                                            alt=""
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                                        />
-                                    </div>
-                                    <div className="flex-1 flex flex-col justify-center">
-                                        <div className="flex items-center gap-3 text-[10px] font-bold text-lab-citrus uppercase tracking-widest mb-3">
-                                            <Calendar size={12} />
-                                            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Recent'}
-                                        </div>
-                                        <h3 className="text-xl font-serif font-semibold text-lab-dark mb-3 group-hover:text-lab-citrus transition-colors">
-                                            {post.title?.[lang] || 'Untitled'}
-                                        </h3>
-                                        <p className="text-sm text-slate-600 mb-4 line-clamp-2 leading-relaxed">
-                                            {post.excerpt?.[lang]}
-                                        </p>
-                                        <span className="text-xs font-bold underline decoration-lab-mint underline-offset-8 group-hover:decoration-lab-citrus transition-all">
-                                            {t('blog.read_more') || 'Read Full Entry'}
-                                        </span>
-                                    </div>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
-
-            {/* --- CONTACT SECTION (Functional) --- */}
+            {/* --- CONTACT SECTION --- */}
             <section id="contact" className="py-24 px-6 max-w-4xl mx-auto">
                 <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] p-8 md:p-16 shadow-2xl border border-white/50 relative overflow-hidden">
-
                     <h2 className="font-serif text-4xl text-center text-lab-dark mb-12">{t('contact.title')}</h2>
 
                     {formStatus === 'SUCCESS' ? (
