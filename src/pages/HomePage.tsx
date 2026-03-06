@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, Send, Linkedin, Calendar } from 'lucide-react';
@@ -59,6 +59,23 @@ const HomePage: React.FC<HomePageProps> = ({ journeySteps = [], posts = [], load
             setFormStatus('ERROR');
         }
     };
+
+    // Défilement automatique vers l'ancre au chargement (depuis une autre page)
+    useEffect(() => {
+        if (!loading && window.location.hash) {
+            const targetId = window.location.hash.replace('#', '');
+            const element = document.getElementById(targetId);
+            if (element) {
+                // Un léger délai permet au navigateur de finir de peindre le DOM
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: element.getBoundingClientRect().top + window.scrollY - 85,
+                        behavior: 'smooth'
+                    });
+                }, 100);
+            }
+        }
+    }, [loading]);
 
     return (
         <main className="relative z-10">
