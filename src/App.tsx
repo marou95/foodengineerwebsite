@@ -12,10 +12,11 @@ import BlogPostDetail from './pages/BlogPostDetail';
 import BlogArchive from './pages/BlogArchive';
 
 // Services & Types
-import { getJourneySteps, getPosts } from './services/sanity.client';
-import { JourneyStep, BlogPost } from './types';
+import { getEngineerProfile, getJourneySteps, getPosts } from './services/sanity.client';
+import { EngineerProfile, JourneyStep, BlogPost } from './types';
 
 const App: React.FC = () => {
+  const [profile, setProfile] = useState<EngineerProfile | undefined>(undefined);
   const [journeySteps, setJourneySteps] = useState<JourneyStep[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,9 +26,15 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const journeyData = await getJourneySteps();
+        const [journeyData, profileData] = await Promise.all([
+          getJourneySteps(),
+          getEngineerProfile()
+        ]);
+
         setJourneySteps(journeyData);
-        setLoading(false); // UI débloquée rapidement
+        if (profileData) setProfile(profileData);
+
+        setLoading(false);
 
         setTimeout(async () => {
           const postsData = await getPosts();
@@ -71,7 +78,7 @@ const App: React.FC = () => {
           <Routes>
             <Route
               path="/"
-              element={<HomePage journeySteps={journeySteps} posts={posts} loading={loading} />}
+              element={<HomePage profile={profile} journeySteps={journeySteps} posts={posts} loading={loading} />}
             />
             <Route path="/blog/:slug" element={<BlogPostDetail />} />
             <Route path="/blog" element={<BlogArchive />} />

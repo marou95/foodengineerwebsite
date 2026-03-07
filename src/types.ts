@@ -35,6 +35,17 @@ export interface JourneyStep {
   image?: SanityImage;
 }
 
+export interface EngineerProfile {
+  name: string;
+  role: string;
+  bio: { en: any[]; tr: any[] };
+  yearsOfExperience: number;
+  specialties: string[];
+  profileImage?: {
+    asset: { _ref: string };
+  };
+}
+
 // Navigation Item
 export interface NavItem {
   label: string;
