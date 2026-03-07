@@ -173,7 +173,7 @@ const BlogArchive: React.FC = () => {
                     >
                         <Link 
                             to={`/blog/${slug}`} 
-                            className="flex flex-col group cursor-pointer h-full p-4 md:p-6 rounded-2xl hover:bg-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-500"
+                            className="flex flex-col group cursor-pointer h-full p-4 md:p-6 rounded-2xl  hover:bg-slate-400/10 hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-all duration-500"
                         >
                             <div className="w-full aspect-[3/4] overflow-hidden bg-slate-50 mb-8 rounded-none">
                                 <img

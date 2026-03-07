@@ -35,8 +35,8 @@ const resources = {
         name: "Name",
         email: "Email",
         message: "Your Message",
-        send: "Transmit Request",
-        success: "Data transmitted successfully."
+        send: "Send message",
+        success: "Message sent successfully."
       }
     }
   },

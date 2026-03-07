@@ -68,7 +68,7 @@ const LabJournal: React.FC<LabJournalProps> = ({ posts }) => {
                         {posts.map((post) => {
                             const slug = post.slug?.current;
                             const imageUrl = post.mainImage?.asset?._ref
-                                ? urlFor(post.mainImage).width(450).height(600).fit('crop').url()
+                                ? urlFor(post.mainImage).width(500).height(600).fit('crop').url()
                                 : "/images/default.jpg";
 
                             return (
